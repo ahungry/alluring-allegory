@@ -29,8 +29,8 @@
 (defclass BG-Layer (Base)
   ((Source-Image
     :accessor Source-Image
-    :initarg :Source-image
-    :initform "some.png")
+    :initarg :source-image
+    :initform "beach.png")
    (Scale
     :accessor Scale
     :initarg :Scale
@@ -52,3 +52,6 @@
     :initarg :Y-offset
     :initform 0))
   (:documentation "A background layer for parallax scrolling"))
+
+(defmethod Full-Source-Image ((bg-layer BG-Layer) asset-path)
+  (format nil "~a/img/bg/~a" asset-path (Source-Image bg-layer)))

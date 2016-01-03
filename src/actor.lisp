@@ -21,7 +21,7 @@
   (:use :cl
         :alluring-allegory.base
         :glyphs)
-  (:export :Actor :Source-Image :Name))
+  (:export :Actor :Name))
 (in-package :alluring-allegory.actor)
 
 ;;; "actor" goes here. Hacks and glory await!
@@ -35,3 +35,6 @@
     :accessor Name
     :initarg :name
     :initform "Pink")))
+
+(defmethod Full-Source-Image ((actor Actor) asset-path)
+  (format nil "~a/img/sprite/~a" asset-path (Source-Image actor)))

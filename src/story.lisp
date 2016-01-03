@@ -79,6 +79,7 @@ Are you ready to get going?"
                      (make-instance 'Choice :text "Maybe" :next-scene "Comfort")
                      (make-instance 'Choice :text "Heck yea!" :next-scene "Onward")
                      )
+           :background (make-instance 'BG-Layer :source-image "beach-oily.png")
            ) scene-data-list)
 
     (push (make-instance

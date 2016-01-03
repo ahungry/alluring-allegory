@@ -166,11 +166,15 @@
   "The chosen scene option."
   (setf *ox* .3 *oy* -.5) ;; Reset the text position to the middle of screen
   (multiple-value-bind (scene-id)
-    (get-next-scene-id (Current-Scene *story-singleton*) choice)
+      (get-next-scene-id (Current-Scene *story-singleton*) choice)
     (when scene-override (setf scene-id scene-override))
     (when (gethash scene-id (Scene-Data *story-singleton*))
       (Update-Current-Scene *story-singleton* scene-id)
       (let ((scene (gethash scene-id (Scene-Data *story-singleton*))))
+        ;; TODO - Add the background change into the Story class
+        (unless (equal *background-texture-source* (Full-Source-Image (Background scene) *asset-path*))
+          (setf *background-texture-source* (Full-Source-Image (Background scene) *asset-path*))
+          (setf *background-texture* (load-a-texture *background-texture-source*)))
         (say-sdl (Text scene))
         (loop
            for choice-slot from 0 to 3
@@ -272,6 +276,7 @@
 (defparameter *player-texture* nil)
 (defparameter *bubble-texture* nil)
 (defparameter *background-texture* nil)
+(defparameter *background-texture-source* nil)
 
 (defun opengl-main ()
   "Test drawing with opengl"

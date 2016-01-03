@@ -20,13 +20,18 @@
 (defpackage alluring-allegory.base
   (:use :cl
         :glyphs)
-  (:export :Base :Title :Text))
+  (:export :Base :Source-Image :Title :Text
+           :Full-Source-Image))
 (in-package :alluring-allegory.base)
 
 ;;; "base" goes here. Hacks and glory await!
 
 (defclass Base ()
-  ((Title
+  ((Source-Image
+    :accessor Source-Image
+    :initarg :source-image
+    :initform "beach.png")
+   (Title
     :accessor Title
     :initarg :title
     :initform "Title")
@@ -34,3 +39,9 @@
     :accessor Text
     :initarg :text
     :initform "")))
+
+(defgeneric Full-Source-Image (object asset-path)
+  (:documentation "Return the full object path."))
+
+(defmethod Full-Source-Image ((base Base) asset-path)
+  (format nil "~a/img/~a" asset-path (Source-Image base)))

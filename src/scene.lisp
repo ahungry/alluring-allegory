@@ -49,7 +49,7 @@
     :initform (vector (make-instance 'Actor)))
    (Background
     :accessor Background
-    :initarg :bg
+    :initarg :background
     :initform (make-instance 'BG-Layer))))
 
 (defgeneric get-next-scene-id (object choice)
