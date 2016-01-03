@@ -40,10 +40,11 @@
   :components ((:module "src"
                 :components
                 ((:file "main" :depends-on ("story" "scene" "actor" "bg-layer" "choice"))
-                 (:file "story" :depends-on ("scene" "actor" "bg-layer" "choice"))
-                 (:file "scene" :depends-on ("actor" "bg-layer" "choice"))
-                 (:file "bg-layer")
-                 (:file "choice")
-                 (:file "actor"))))
+                 (:file "story" :depends-on ("base" "scene" "actor" "bg-layer" "choice"))
+                 (:file "scene" :depends-on ("base" "actor" "bg-layer" "choice"))
+                 (:file "bg-layer" :depends-on ("base"))
+                 (:file "choice" :depends-on ("base"))
+                 (:file "actor" :depends-on ("base"))
+                 (:file "base"))))
   :description "A story driven game"
   :in-order-to ((test-op (load-op alluring-allegory-test))))

@@ -19,13 +19,14 @@
 (in-package :cl-user)
 (defpackage alluring-allegory.actor
   (:use :cl
+        :alluring-allegory.base
         :glyphs)
-  (:export :Actor))
+  (:export :Actor :Source-Image :Name))
 (in-package :alluring-allegory.actor)
 
 ;;; "actor" goes here. Hacks and glory await!
 
-(defclass Actor ()
+(defclass Actor (Base)
   ((Source-Image
     :accessor Source-Image
     :initarg :si

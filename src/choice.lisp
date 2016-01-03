@@ -19,18 +19,15 @@
 (in-package :cl-user)
 (defpackage alluring-allegory.choice
   (:use :cl
+        :alluring-allegory.base
         :glyphs)
-  (:export :Choice :Next-Scene :Choice-Text))
+  (:export :Choice :Next-Scene))
 (in-package :alluring-allegory.choice)
 
 ;;; "choice" goes here. Hacks and glory await!
 
-(defclass Choice ()
+(defclass Choice (Base)
   ((Next-Scene
     :accessor Next-Scene
     :initarg :next-scene
-    :initform "")
-   (Choice-Text
-    :accessor Choice-Text
-    :initarg :text
     :initform "")))

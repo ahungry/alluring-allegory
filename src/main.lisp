@@ -22,6 +22,7 @@
         :sdl
         :bordeaux-threads
         :glyphs
+        :alluring-allegory.base
         :alluring-allegory.actor
         :alluring-allegory.choice
         :alluring-allegory.bg-layer
@@ -176,7 +177,7 @@
            do (progn
                 (input-to-texture choice-slot
                                   (if (array-in-bounds-p (Choices scene) choice-slot)
-                                      (Choice-Text (aref (Choices scene) choice-slot)) ""))))))))
+                                      (Text (aref (Choices scene) choice-slot)) ""))))))))
 
 (defun draw ()
   "Draw a frame"

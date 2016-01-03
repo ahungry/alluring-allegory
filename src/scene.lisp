@@ -19,17 +19,18 @@
 (in-package :cl-user)
 (defpackage alluring-allegory.scene
   (:use :cl
+        :alluring-allegory.base
         :alluring-allegory.bg-layer
         :alluring-allegory.actor
         :alluring-allegory.choice
         :glyphs)
-  (:export :Scene :Title :Text :Choices :Actors :Background
+  (:export :Scene :Choices :Actors :Background
            :get-next-scene-id))
 (in-package :alluring-allegory.scene)
 
 ;;; "scene" goes here. Hacks and glory await!
 
-(defclass Scene ()
+(defclass Scene (Base)
   ((Title
     :accessor Title
     :initarg :title
@@ -59,4 +60,4 @@
 as the plain text description of what we just chose to get there."
   (if (array-in-bounds-p (Choices current-scene) choice)
       (let ((next-scene-id (Next-Scene (aref (Choices current-scene) choice))))
-        (values next-scene-id (Choice-Text (aref (Choices current-scene) choice))))))
+        (values next-scene-id (Text (aref (Choices current-scene) choice))))))

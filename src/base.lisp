@@ -14,41 +14,23 @@
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;;; bg-layer.lisp
+;;;; base.lisp
 
 (in-package :cl-user)
-(defpackage alluring-allegory.bg-layer
+(defpackage alluring-allegory.base
   (:use :cl
-        :alluring-allegory.base
         :glyphs)
-  (:export :BG-Layer))
-(in-package :alluring-allegory.bg-layer)
+  (:export :Base :Title :Text))
+(in-package :alluring-allegory.base)
 
-;;; "bg-layer" goes here. Hacks and glory await!
+;;; "base" goes here. Hacks and glory await!
 
-(defclass BG-Layer (Base)
-  ((Source-Image
-    :accessor Source-Image
-    :initarg :Source-image
-    :initform "some.png")
-   (Scale
-    :accessor Scale
-    :initarg :Scale
-    :initform 1)
-   (GL-Texture
-    :accessor GL-Texture
-    :initarg :GL-Texture
-    :initform nil)
-   (X-size
-    :accessor X-size
-    :initarg :X-size
-    :initform 1000)
-   (Y-size
-    :accessor Y-size
-    :initarg :Y-size
-    :initform 1000)
-   (Y-offset
-    :accessor Y-offset
-    :initarg :Y-offset
-    :initform 0))
-  (:documentation "A background layer for parallax scrolling"))
+(defclass Base ()
+  ((Title
+    :accessor Title
+    :initarg :title
+    :initform "Title")
+   (Text
+    :accessor Text
+    :initarg :text
+    :initform "")))

@@ -19,6 +19,7 @@
 (in-package :cl-user)
 (defpackage alluring-allegory.story
   (:use :cl
+        :alluring-allegory.base
         :alluring-allegory.scene
         :alluring-allegory.choice
         :alluring-allegory.actor
@@ -32,7 +33,7 @@
 
 ;; This is where we will define the story
 
-(defclass Story ()
+(defclass Story (Base)
   ((Title
     :accessor Story-Title
     :initarg :title
