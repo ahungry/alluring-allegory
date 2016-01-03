@@ -208,6 +208,16 @@ story - are you ready for a wonderful adventure?"
   (say-sdl *story*)
   (gl:clear :color-buffer-bit)
   (gl:color 1 1 1)
+  (gl:with-pushed-matrix
+    (gl:bind-texture :texture-2d *background-texture*)
+    (gl:translate (* -1 (/ *ox* 8)) (* -1 (/ *oy* 64)) 0)
+    (gl:scale 1.5 1.5 0)
+    (my-rectangle :texcoords '(0 0 1 1)))
+  (gl:with-pushed-matrix
+    (gl:bind-texture :texture-2d *player-texture*)
+    (gl:translate (* -1 (/ *ox* 4)) (- (* -1 (/ *oy* 32)) .25) 0)
+    (gl:scale .8 1 0)
+    (my-rectangle :texcoords '(0 0 1 1)))
   (let ((rendered-story-clone (copy-list *rendered-story*)))
     (loop for rendered-story in (nreverse rendered-story-clone)
        for y from 0 by 2
@@ -267,6 +277,7 @@ story - are you ready for a wonderful adventure?"
           (aref *input-words-time* choice) (get-universal-time))))
 
 (defparameter *player-texture* nil)
+(defparameter *background-texture* nil)
 
 (defun opengl-main ()
   "Test drawing with opengl"
@@ -279,7 +290,8 @@ story - are you ready for a wonderful adventure?"
                 :fps (make-instance 'sdl:fps-fixed :target-frame-rate 20))
     (setf cl-opengl-bindings:*gl-get-proc-address* #'sdl-cffi::sdl-gl-get-proc-address)
     (sdl:enable-unicode)
-    (let ((*player-texture* nil))
+    (let ((*player-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/sprite/pink-hair.png"))
+          (*background-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/beach-oily.png")))
       (init)
       (sdl:with-events ()
         (:quit-event ()
@@ -317,6 +329,7 @@ story - are you ready for a wonderful adventure?"
       ;; Release textures
       (gl:delete-textures
        (append
+        (list *player-texture* *background-texture*)
         *rendered-story*
         (loop for x across *input-words-texture* collect x)))
       ;; Release audio if it was missed in quit event
