@@ -237,6 +237,7 @@ story - are you ready for a wonderful adventure?"
   (setf (gethash "Postmodem nou!" *scene-data*)
         #("No, you suck!"))
   )
+(scene-data-populate)
 
 (defun get-next-scene-id (scene-id choice)
   "Given a scene-id, and a choice, find what scene-id we go to next, as well
@@ -244,7 +245,7 @@ as the plain text description of what we just chose to get there."
   (let ((current-scene (gethash scene-id *scene-data*)))
     (if (array-in-bounds-p current-scene (1+ choice))
         (let ((next-scene-id (car (aref current-scene (1+ choice)))))
-          (values next-scene-id "LOLZ")))))
+          (values next-scene-id (cadr (aref current-scene (1+ choice))))))))
 
 (defun change-scene (choice &optional scene-override)
   "The chosen scene option."

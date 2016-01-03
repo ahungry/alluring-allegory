@@ -21,7 +21,7 @@
   (:use :cl :asdf))
 (in-package :alluring-allegory-asd)
 
-(defsystem com.ahungry
+(defsystem alluring-allegory
   :version "0.1"
   :author "Matthew Carter <m@ahungry.com>"
   :license "AGPLv3"
@@ -39,7 +39,7 @@
   :serial t ;; May not be needed
   :components ((:module "src"
                 :components
-                ((:file "alluring-allegory" :depends-on ("actor"))
-                 (:file "aa.actor" :depends-on ("view" "model" "javascript")))))
+                ((:file "main" :depends-on ("actor"))
+                 (:file "actor"))))
   :description "A story driven game"
   :in-order-to ((test-op (load-op alluring-allegory-test))))

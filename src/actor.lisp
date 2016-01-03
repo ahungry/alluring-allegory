@@ -17,9 +17,8 @@
 ;;;; alluring-allegory.lisp
 
 (in-package :cl-user)
-(defpackage alluring-allegory
+(defpackage alluring-allegory.actor
   (:use :cl
-        :alluring-allegory.actor
         :glyphs)
   (:export :Actor))
 (in-package :alluring-allegory.actor)
