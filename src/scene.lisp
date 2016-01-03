@@ -14,23 +14,33 @@
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;;; actor.lisp
+;;;; scene.lisp
 
 (in-package :cl-user)
-(defpackage alluring-allegory.actor
+(defpackage alluring-allegory.scene
   (:use :cl
+        :alluring-allegory.bg-layer
+        :alluring-allegory.actor
         :glyphs)
-  (:export :Actor))
-(in-package :alluring-allegory.actor)
+  (:export :Scene))
+(in-package :alluring-allegory.scene)
 
-;;; "actor" goes here. Hacks and glory await!
+;;; "scene" goes here. Hacks and glory await!
 
-(defclass Actor ()
-  ((Source-Image
-    :accessor Source-Image
-    :initarg :si
-    :initform "pink-hair.png")
-   (Name
-    :accessor Name
-    :initarg :name
-    :initform "Pink")))
+(defclass Scene ()
+  ((Title
+    :accessor Title
+    :initarg :title
+    :initform "title")
+   (Choices
+    :accessor Choices
+    :initarg :choices
+    :initform (vector (make-instance 'Choice)))
+   (Actors
+    :accessor Actors
+    :initarg :actors
+    :initform (vector (make-instance 'Actor)))
+   (Background
+    :accessor Background
+    :initarg :bg
+    :initform (make-instance 'BG-Layer))))

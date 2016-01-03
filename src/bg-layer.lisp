@@ -14,23 +14,40 @@
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;;; actor.lisp
+;;;; bg-layer.lisp
 
 (in-package :cl-user)
-(defpackage alluring-allegory.actor
+(defpackage alluring-allegory.bg-layer
   (:use :cl
         :glyphs)
-  (:export :Actor))
-(in-package :alluring-allegory.actor)
+  (:export :Scene))
+(in-package :alluring-allegory.bg-layer)
 
-;;; "actor" goes here. Hacks and glory await!
+;;; "bg-layer" goes here. Hacks and glory await!
 
-(defclass Actor ()
+(defclass BG-Layer ()
   ((Source-Image
     :accessor Source-Image
-    :initarg :si
-    :initform "pink-hair.png")
-   (Name
-    :accessor Name
-    :initarg :name
-    :initform "Pink")))
+    :initarg :Source-image
+    :initform "some.png")
+   (Scale
+    :accessor Scale
+    :initarg :Scale
+    :initform 1)
+   (GL-Texture
+    :accessor GL-Texture
+    :initarg :GL-Texture
+    :initform nil)
+   (X-size
+    :accessor X-size
+    :initarg :X-size
+    :initform 1000)
+   (Y-size
+    :accessor Y-size
+    :initarg :Y-size
+    :initform 1000)
+   (Y-offset
+    :accessor Y-offset
+    :initarg :Y-offset
+    :initform 0))
+  (:documentation "A background layer for parallax scrolling"))

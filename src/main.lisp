@@ -23,6 +23,7 @@
         :bordeaux-threads
         :glyphs
         :alluring-allegory.actor
+        :alluring-allegory.scene
         :glyphs)
   (:export :main))
 (in-package :alluring-allegory)
@@ -151,92 +152,17 @@
 
 (defparameter *max-renders-last* 1)
 (defparameter *max-renders* 1)
-(defparameter *story* "Hello player,
-Please use the arrows to navigate the story.")
-(defparameter *scene* 0)
 
 (defun get-choice (scene number)
   "Get the appropriate choices for the scene."
   (declare (ignore scene))
   (format nil "Choice ~a" number))
 
-(defclass Choice ()
-  ((Next-Scene-Id
-    :accessor Next-Scene-Id
-    :initarg :nsi
-    :initform "")
-   (Choice-Text
-    :accessor Choice-Text
-    :initarg :ct
-    :initform "")))
-
-(defclass BG-Layer ()
-  ((Source-Image
-    :accessor Source-Image
-    :initarg :Source-image
-    :initform "some.png")
-   (Scale
-    :accessor Scale
-    :initarg :Scale
-    :initform 1)
-   (GL-Texture
-    :accessor GL-Texture
-    :initarg :GL-Texture
-    :initform nil)
-   (X-size
-    :accessor X-size
-    :initarg :X-size
-    :initform 1000)
-   (Y-size
-    :accessor Y-size
-    :initarg :Y-size
-    :initform 1000)
-   (Y-offset
-    :accessor Y-offset
-    :initarg :Y-offset
-    :initform 0))
-  (:documentation "A background layer for parallax scrolling"))
-
-(defclass Scene ()
-  ((Title
-    :accessor Title
-    :initarg :title
-    :initform "title")
-   (Choices
-    :accessor Choices
-    :initarg :choices
-    :initform (loop for x from 0 to 4 collect (make-instance 'Choice)))
-   (Actors
-    :accessor Actors
-    :initarg :actors
-    :initform (loop for x from 0 to 1 collect (make-instance 'Actor)))
-   (Background
-    :accessor Background
-    :initarg :bg
-    :initform (make-instance 'BG-Layer))))
-
+(defparameter *story* "Hello player,
+Please use the arrows to navigate the story.")
+(defparameter *scene* 0)
 (defparameter *scene-data* (make-hash-table :test #'equal))
-(defun scene-data-populate ()
-  "Fill up the *scene-data* hash table with our various scenes."
-  (setf (gethash "Introduction" *scene-data*)
-        #("Good job!  You made your first choice.  Next up, we will begin our
-story - are you ready for a wonderful adventure?"
-          ("Onward" "Yes") ("Comfort" "No") ("Onward" "Maybe") ("Onward" "So")))
-  (setf (gethash "Comfort" *scene-data*)
-        #("It's ok, don't be afraid.  You can do this game, it isn't too difficult."
-          ("Onward" "Ok....if you say so...")))
-  (setf (gethash "Onward" *scene-data*)
-        #("Now we go on"
-          ("Finish" "Ok")))
-  (setf (gethash "Finish" *scene-data*)
-        #("Fin."
-          ("Postmodem" "Thanks for the great game!")
-          ("Postmodem nou!" "Your game sucked!")))
-  (setf (gethash "Postmodem" *scene-data*)
-        #("Thanks!"))
-  (setf (gethash "Postmodem nou!" *scene-data*)
-        #("No, you suck!"))
-  )
+
 (scene-data-populate)
 
 (defun get-next-scene-id (scene-id choice)

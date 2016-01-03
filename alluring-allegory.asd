@@ -39,7 +39,11 @@
   :serial t ;; May not be needed
   :components ((:module "src"
                 :components
-                ((:file "main" :depends-on ("actor"))
+                ((:file "main" :depends-on ("story" "scene" "actor" "bg-layer" "choice"))
+                 (:file "story" :depends-on ("scene" "actor" "bg-layer" "choice"))
+                 (:file "scene" :depends-on ("actor" "bg-layer" "choice"))
+                 (:file "bg-layer")
+                 (:file "choice")
                  (:file "actor"))))
   :description "A story driven game"
   :in-order-to ((test-op (load-op alluring-allegory-test))))
