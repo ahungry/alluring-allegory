@@ -50,7 +50,7 @@
 (defun sdl-font-to-texture (width height words-list &key (bpp 32) (color sdl:*white*))
   "Write a font to a texture"
   (let* ((texture (car (gl:gen-textures 1)))
-         (image (sdl:create-surface (* 2 width) (* 2 height)
+         (image (sdl:create-surface (* 2 width) (* 1 height)
                                     :pixel-alpha t
                                     :bpp bpp)))
     (unless (sdl:initialise-default-font sdl:*ttf-font-vera*)
@@ -134,7 +134,7 @@
     (let ((w *resolution-width*)
           (h (* 1 *resolution-height*)))
       ;; Break the vertical textures up into many textures based on how many lines per will fit
-      (let ((max-lines-per-texture (ceiling (/ (- h 10) 16)))
+      (let ((max-lines-per-texture (ceiling (/ (- h 10) 16))) ;; font size
             (lines (split-sequence:split-sequence #\Newline (untab words))))
         (unless (eq *words* words)
           (setf *rendered-story* nil))
@@ -161,23 +161,16 @@
   (declare (ignore scene))
   (format nil "Choice ~a" number))
 
-(defparameter *story* "Hello player,
-Please use the arrows to navigate the story.")
-(defparameter *scene* 0)
-
-(scene-data-populate)
-
 (defun change-scene (choice &optional scene-override)
   "The chosen scene option."
-  (setf *ox* .5 *oy* -1.5) ;; Reset the text position to the middle of screen
+  (setf *ox* .3 *oy* -.5) ;; Reset the text position to the middle of screen
   (multiple-value-bind (scene-id)
-      (get-next-scene-id (gethash *scene* *scene-data*) choice)
+    (get-next-scene-id (Current-Scene *story-singleton*) choice)
     (when scene-override (setf scene-id scene-override))
-    (when (gethash scene-id *scene-data*)
-      (setf *scene* scene-id)
-      (let ((scene (gethash scene-id *scene-data*)))
-        (setf *story* (format nil "~a" (Text scene)))
-        (say-sdl *story*)
+    (when (gethash scene-id (Scene-Data *story-singleton*))
+      (Update-Current-Scene *story-singleton* scene-id)
+      (let ((scene (gethash scene-id (Scene-Data *story-singleton*))))
+        (say-sdl (Text scene))
         (loop
            for choice-slot from 0 to 3
            do (progn
@@ -213,7 +206,7 @@ Please use the arrows to navigate the story.")
   ;; Draw the speech bubbles
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *bubble-texture*)
-    (gl:translate (- *ox* .4) (+ *oy* .9) 0)
+    (gl:translate (- *ox* .2) (+ *oy* .3) 0)
     (gl:scale 1 .3 0)
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the story that loops across lines
@@ -227,7 +220,7 @@ Please use the arrows to navigate the story.")
               (gl:bind-texture :texture-2d rendered-story)
               ;;(gl:tex-parameter :texture-2d :texture-min-filter :nearest)
               ;;(gl:tex-parameter :texture-2d :texture-mag-filter :nearest)
-              (gl:scale 1 1 0)
+              (gl:scale .8 .4 0)
               (my-rectangle :texcoords '(0 0 1 1))))))
   (loop for choice from 0 to 3
      do
@@ -246,15 +239,15 @@ Please use the arrows to navigate the story.")
   (gl:flush)
   (sdl:update-display))
 
+;; Begin an instance of the story
+(defparameter *story-singleton* (make-instance 'Story))
+
 (defun init ()
-  ;;(setf *ox* .3 *oy* -1.0)
   (gl:enable :blend)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (gl:enable :texture-2d)
-  ;;(setf *story-render-thread* nil)
-  ;;(say-sdl "Welcome")
-  (setf *scene* "Introduction")
-  (setf *story* "Welcome")
+  (setf *story-singleton* (make-instance 'Story))
+  (scene-data-populate *story-singleton*)
   (change-scene 0 "Introduction"))
 
 (defparameter *py* 0)
@@ -288,12 +281,15 @@ Please use the arrows to navigate the story.")
                 :flags sdl:sdl-opengl
                 :opengl t
                 :fps (make-instance 'sdl:fps-fixed :target-frame-rate 20))
+    (sdl-mixer:OPEN-AUDIO)
     (setf cl-opengl-bindings:*gl-get-proc-address* #'sdl-cffi::sdl-gl-get-proc-address)
     (sdl:enable-unicode)
     (let ((*player-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/sprite/pink-hair.png"))
           (*bubble-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/bubble.png"))
-          (*background-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/beach-oily.png")))
+          (*background-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/beach-oily.png"))
+          (music (sdl-mixer:load-music (format nil "~a/audio/~a" *asset-path* "bg-theme.mp3"))))
       (init)
+      (sdl-mixer:play-music music :loop t)
       (sdl:with-events ()
         (:quit-event ()
                      t)
@@ -334,6 +330,9 @@ Please use the arrows to navigate the story.")
         *rendered-story*
         (loop for x across *input-words-texture* collect x)))
       ;; Release audio if it was missed in quit event
+      (sdl-mixer:halt-music)
+      (sdl-mixer:free music)
+      (sdl-mixer:close-audio)
       )))
 
 (defun main ()

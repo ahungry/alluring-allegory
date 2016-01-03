@@ -30,7 +30,7 @@
     :accessor Next-Scene
     :initarg :next-scene
     :initform "")
-   (Text
+   (Choice-Text
     :accessor Choice-Text
     :initarg :text
     :initform "")))
