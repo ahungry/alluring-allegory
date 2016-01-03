@@ -16,7 +16,16 @@
 
 ;;;; alluring-allegory.lisp
 
-(in-package #:alluring-allegory)
+(in-package :cl-user)
+(defpackage alluring-allegory
+  (:use :cl
+        :sdl
+        :bordeaux-threads
+        :glyphs
+        :alluring-allegory.actor
+        :glyphs)
+  (:export :main))
+(in-package :alluring-allegory)
 
 ;;; "alluring-allegory" goes here. Hacks and glory await!
 
@@ -130,9 +139,11 @@
            do (progn
                 (when (and (<= tn *max-renders*)
                            (>= tn (length *rendered-story*)))
+                  ;;(sdl-font-to-texture w h (list words) :bpp 32 :color (color :r #xff :g #x00 :b #xaa)))
                   (push (sdl-font-to-texture w h (subseq lines tx
                                                          (min (+ tx max-lines-per-texture)
-                                                              (length lines))))
+                                                              (length lines)))
+                                             :bpp 32 :color (color :r #xff :g #x00 :b #xaa))
                         *rendered-story*))))))
     (setf *words* words
           *max-renders-last* *max-renders*
@@ -148,6 +159,61 @@ Please use the arrows to navigate the story.")
   "Get the appropriate choices for the scene."
   (declare (ignore scene))
   (format nil "Choice ~a" number))
+
+(defclass Choice ()
+  ((Next-Scene-Id
+    :accessor Next-Scene-Id
+    :initarg :nsi
+    :initform "")
+   (Choice-Text
+    :accessor Choice-Text
+    :initarg :ct
+    :initform "")))
+
+(defclass BG-Layer ()
+  ((Source-Image
+    :accessor Source-Image
+    :initarg :Source-image
+    :initform "some.png")
+   (Scale
+    :accessor Scale
+    :initarg :Scale
+    :initform 1)
+   (GL-Texture
+    :accessor GL-Texture
+    :initarg :GL-Texture
+    :initform nil)
+   (X-size
+    :accessor X-size
+    :initarg :X-size
+    :initform 1000)
+   (Y-size
+    :accessor Y-size
+    :initarg :Y-size
+    :initform 1000)
+   (Y-offset
+    :accessor Y-offset
+    :initarg :Y-offset
+    :initform 0))
+  (:documentation "A background layer for parallax scrolling"))
+
+(defclass Scene ()
+  ((Title
+    :accessor Title
+    :initarg :title
+    :initform "title")
+   (Choices
+    :accessor Choices
+    :initarg :choices
+    :initform (loop for x from 0 to 4 collect (make-instance 'Choice)))
+   (Actors
+    :accessor Actors
+    :initarg :actors
+    :initform (loop for x from 0 to 1 collect (make-instance 'Actor)))
+   (Background
+    :accessor Background
+    :initarg :bg
+    :initform (make-instance 'BG-Layer))))
 
 (defparameter *scene-data* (make-hash-table :test #'equal))
 (defun scene-data-populate ()
@@ -173,26 +239,32 @@ story - are you ready for a wonderful adventure?"
   )
 
 (defun get-next-scene-id (scene-id choice)
-  "Given a scene-id, and a choice, find what scene-id we go to next."
+  "Given a scene-id, and a choice, find what scene-id we go to next, as well
+as the plain text description of what we just chose to get there."
   (let ((current-scene (gethash scene-id *scene-data*)))
     (if (array-in-bounds-p current-scene (1+ choice))
         (let ((next-scene-id (car (aref current-scene (1+ choice)))))
-          next-scene-id) scene-id)))
+          (values next-scene-id "LOLZ")))))
 
-(defun change-scene (choice &optional scene-id)
+(defun change-scene (choice &optional scene-override)
   "The chosen scene option."
-  (setf *ox* .3 *oy* -1) ;; Reset the text position to the middle of screen
-  (unless scene-id (setf scene-id (get-next-scene-id *scene* choice)))
-  (setf *scene* scene-id)
-  (when (gethash scene-id *scene-data*)
-    (let ((scene (gethash scene-id *scene-data*)))
-      (setf *story* (format nil "Choice: ~a~%Scene: ~a~%~a" choice scene-id (aref scene 0)))
-      (loop
-         for choice-slot from 1 to 4
-         do (progn
-              (input-to-texture (1- choice-slot)
-                                (if (array-in-bounds-p scene choice-slot)
-                                    (cadr (aref scene choice-slot)) "")))))))
+  (setf *ox* .6 *oy* -1.5) ;; Reset the text position to the middle of screen
+  (multiple-value-bind (scene-id last-choice-text) (get-next-scene-id *scene* choice)
+    (when scene-override (setf scene-id scene-override))
+    (when (gethash scene-id *scene-data*)
+      (setf *scene* scene-id)
+      (let ((scene (gethash scene-id *scene-data*)))
+        (setf *story* (format nil "Scene: ~a~%'~a'~%~a"
+                              scene-id
+                              last-choice-text
+                              (aref scene 0)))
+        (say-sdl *story*)
+        (loop
+           for choice-slot from 1 to 4
+           do (progn
+                (input-to-texture (1- choice-slot)
+                                  (if (array-in-bounds-p scene choice-slot)
+                                      (cadr (aref scene choice-slot)) ""))))))))
 
 (defun draw ()
   "Draw a frame"
@@ -205,19 +277,27 @@ story - are you ready for a wonderful adventure?"
   (when (> *oy* 1.0) (change-scene 0))
   (when (< *oy* -2.3) (change-scene 1))
   (setf *max-renders* (1+ (abs (round *oy*))))
-  (say-sdl *story*)
   (gl:clear :color-buffer-bit)
   (gl:color 1 1 1)
+  ;; Draw the main background
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *background-texture*)
     (gl:translate (* -1 (/ *ox* 8)) (* -1 (/ *oy* 64)) 0)
     (gl:scale 1.5 1.5 0)
     (my-rectangle :texcoords '(0 0 1 1)))
+  ;; Draw the sprites that are talking
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *player-texture*)
     (gl:translate (* -1 (/ *ox* 4)) (- (* -1 (/ *oy* 32)) .25) 0)
     (gl:scale .8 1 0)
     (my-rectangle :texcoords '(0 0 1 1)))
+  ;; Draw the speech bubbles
+  (gl:with-pushed-matrix
+    (gl:bind-texture :texture-2d *bubble-texture*)
+    (gl:translate (- *ox* .4) (+ *oy* .9) 0)
+    (gl:scale 1 .3 0)
+    (my-rectangle :texcoords '(0 0 1 1)))
+  ;; Draw the story that loops across lines
   (let ((rendered-story-clone (copy-list *rendered-story*)))
     (loop for rendered-story in (nreverse rendered-story-clone)
        for y from 0 by 2
@@ -248,14 +328,14 @@ story - are you ready for a wonderful adventure?"
   (sdl:update-display))
 
 (defun init ()
-  (setf *ox* .3 *oy* -1.0)
+  ;;(setf *ox* .3 *oy* -1.0)
   (gl:enable :blend)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (gl:enable :texture-2d)
   ;;(setf *story-render-thread* nil)
   ;;(say-sdl "Welcome")
-  (setf *scene* 0)
-  (setf *story* "")
+  (setf *scene* "Introduction")
+  (setf *story* "Welcome")
   (change-scene 0 "Introduction"))
 
 (defparameter *py* 0)
@@ -277,6 +357,7 @@ story - are you ready for a wonderful adventure?"
           (aref *input-words-time* choice) (get-universal-time))))
 
 (defparameter *player-texture* nil)
+(defparameter *bubble-texture* nil)
 (defparameter *background-texture* nil)
 
 (defun opengl-main ()
@@ -291,6 +372,7 @@ story - are you ready for a wonderful adventure?"
     (setf cl-opengl-bindings:*gl-get-proc-address* #'sdl-cffi::sdl-gl-get-proc-address)
     (sdl:enable-unicode)
     (let ((*player-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/sprite/pink-hair.png"))
+          (*bubble-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/bubble.png"))
           (*background-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/beach-oily.png")))
       (init)
       (sdl:with-events ()
@@ -329,7 +411,7 @@ story - are you ready for a wonderful adventure?"
       ;; Release textures
       (gl:delete-textures
        (append
-        (list *player-texture* *background-texture*)
+        (list *player-texture* *bubble-texture* *background-texture*)
         *rendered-story*
         (loop for x across *input-words-texture* collect x)))
       ;; Release audio if it was missed in quit event

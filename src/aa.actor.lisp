@@ -14,15 +14,24 @@
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;;; package.lisp
+;;;; alluring-allegory.lisp
 
-(defpackage #:alluring-allegory
-  (:use
-   #:cl
-   #:sdl
-   #:bordeaux-threads
-   #:glyphs
-   )
-  (:export
-   #:opengl-main
-   #:main))
+(in-package :cl-user)
+(defpackage alluring-allegory
+  (:use :cl
+        :alluring-allegory.actor
+        :glyphs)
+  (:export :Actor))
+(in-package :alluring-allegory.actor)
+
+;;; "actor" goes here. Hacks and glory await!
+
+(defclass Actor ()
+  ((Source-Image
+    :accessor Source-Image
+    :initarg :si
+    :initform "pink-hair.png")
+   (Name
+    :accessor Name
+    :initarg :name
+    :initform "Pink")))

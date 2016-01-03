@@ -16,21 +16,30 @@
 
 ;;;; alluring-allegory.asd
 
-(asdf:defsystem #:alluring-allegory
-  :description "A story driven game"
+(in-package :cl-user)
+(defpackage alluring-allegory-asd
+  (:use :cl :asdf))
+(in-package :alluring-allegory-asd)
+
+(defsystem com.ahungry
+  :version "0.1"
   :author "Matthew Carter <m@ahungry.com>"
   :license "AGPLv3"
-  :depends-on (#:lispbuilder-sdl
-               #:lispbuilder-sdl-gfx
-               #:lispbuilder-sdl-image
-               #:lispbuilder-sdl-mixer
-               #:lispbuilder-sdl-ttf
-               #:cl-opengl
-               #:vecto
-               #:drakma
-               #:split-sequence
-               #:bordeaux-threads
-               #:glyphs)
-  :serial t
-  :components ((:file "package")
-               (:file "alluring-allegory")))
+  :depends-on (:lispbuilder-sdl
+               :lispbuilder-sdl-gfx
+               :lispbuilder-sdl-image
+               :lispbuilder-sdl-mixer
+               :lispbuilder-sdl-ttf
+               :cl-opengl
+               :vecto
+               :drakma
+               :split-sequence
+               :bordeaux-threads
+               :glyphs)
+  :serial t ;; May not be needed
+  :components ((:module "src"
+                :components
+                ((:file "alluring-allegory" :depends-on ("actor"))
+                 (:file "aa.actor" :depends-on ("view" "model" "javascript")))))
+  :description "A story driven game"
+  :in-order-to ((test-op (load-op alluring-allegory-test))))
