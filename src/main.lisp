@@ -173,6 +173,7 @@
       (let ((scene (gethash scene-id (Scene-Data *story-singleton*))))
         ;; TODO - Add the background change into the Story class
         (unless (equal *background-texture-source* (Full-Source-Image (Background scene) *asset-path*))
+          (setf *bg-x-grow* 0)
           (setf *background-texture-source* (Full-Source-Image (Background scene) *asset-path*))
           (setf *background-texture* (load-a-texture *background-texture-source*)))
         (say-sdl (Text scene))
@@ -182,6 +183,9 @@
                 (input-to-texture choice-slot
                                   (if (array-in-bounds-p (Choices scene) choice-slot)
                                       (Text (aref (Choices scene) choice-slot)) ""))))))))
+
+(defparameter *bg-x-grow* 0)
+(defparameter *bg-y-grow* 0)
 
 (defun draw ()
   "Draw a frame"
@@ -200,7 +204,7 @@
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *background-texture*)
     (gl:translate (* -1 (/ *ox* 8)) (* -1 (/ *oy* 64)) 0)
-    (gl:scale 1.5 1.5 0)
+    (gl:scale (+ 2 (incf *bg-x-grow* .001)) .8 0) ;; Weird perspective shift
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the sprites that are talking
   (gl:with-pushed-matrix
