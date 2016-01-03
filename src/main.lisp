@@ -23,7 +23,10 @@
         :bordeaux-threads
         :glyphs
         :alluring-allegory.actor
+        :alluring-allegory.choice
+        :alluring-allegory.bg-layer
         :alluring-allegory.scene
+        :alluring-allegory.story
         :glyphs)
   (:export :main))
 (in-package :alluring-allegory)
@@ -161,7 +164,6 @@
 (defparameter *story* "Hello player,
 Please use the arrows to navigate the story.")
 (defparameter *scene* 0)
-(defparameter *scene-data* (make-hash-table :test #'equal))
 
 (scene-data-populate)
 
@@ -181,10 +183,13 @@ as the plain text description of what we just chose to get there."
     (when (gethash scene-id *scene-data*)
       (setf *scene* scene-id)
       (let ((scene (gethash scene-id *scene-data*)))
-        (setf *story* (format nil "Scene: ~a~%'~a'~%~a"
-                              scene-id
+        (setf *story* (format nil "'~a', you say? ~%~%~a"
                               last-choice-text
                               (aref scene 0)))
+        ;; (setf *story* (format nil "Scene: ~a~%'~a'~%~a"
+        ;;                       scene-id
+        ;;                       last-choice-text
+        ;;                       (aref scene 0)))
         (say-sdl *story*)
         (loop
            for choice-slot from 1 to 4

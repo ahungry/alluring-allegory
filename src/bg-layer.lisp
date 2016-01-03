@@ -20,7 +20,7 @@
 (defpackage alluring-allegory.bg-layer
   (:use :cl
         :glyphs)
-  (:export :Scene))
+  (:export :BG-Layer))
 (in-package :alluring-allegory.bg-layer)
 
 ;;; "bg-layer" goes here. Hacks and glory await!

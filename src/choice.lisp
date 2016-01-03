@@ -20,7 +20,7 @@
 (defpackage alluring-allegory.choice
   (:use :cl
         :glyphs)
-  (:export :Scene))
+  (:export :Choice))
 (in-package :alluring-allegory.choice)
 
 ;;; "choice" goes here. Hacks and glory await!

@@ -24,12 +24,14 @@
         :alluring-allegory.actor
         :alluring-allegory.bg-layer
         :glyphs)
-  (:export :scene-data-populate))
+  (:export :*scene-data* :scene-data-populate))
 (in-package :alluring-allegory.story)
 
 ;;; "story" goes here. Hacks and glory await!
 
 ;; This is where we will define the story
+
+(defparameter *scene-data* (make-hash-table :test #'equal))
 
 (defun scene-data-populate ()
   "Fill up the *scene-data* hash table with our various scenes."
