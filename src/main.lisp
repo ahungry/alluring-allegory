@@ -164,7 +164,7 @@
 
 (defun change-scene (choice &optional scene-override)
   "The chosen scene option."
-  (setf *ox* .3 *oy* -.7) ;; Reset the text position to the middle of screen
+  (setf *ox-dest* .3 *oy-dest* -.7 *pan-x-p* t *pan-y-p* t) ;; Reset the text position to the middle of screen
   (multiple-value-bind (scene-id)
       (get-next-scene-id (Current-Scene *story-singleton*) choice)
     (when scene-override (setf scene-id scene-override))
@@ -187,12 +187,29 @@
                                   (if (array-in-bounds-p (Choices scene) choice-slot)
                                       (Text (aref (Choices scene) choice-slot)) ""))))))))
 
+(defparameter *ox-dest* .3)
+(defparameter *oy-dest* -.7)
+(defparameter *pan-x-p* nil)
+(defparameter *pan-y-p* nil)
+
 (defun draw ()
   "Draw a frame"
-  (cond ((> *py* 0) (setf *oy* (+ *oy* .1)))
-        ((< *py* 0) (setf *oy* (- *oy* .1))))
-  (cond ((> *px* 0) (setf *ox* (- *ox* .1)))
-        ((< *px* 0) (setf *ox* (+ *ox* .1))))
+  (if (or *pan-x-p* *pan-y-p*)
+      ;; Auto pan the camera over
+      (progn
+        (cond ((< (+ *oy* .1) *oy-dest*) (setf *oy* (+ *oy* .1)))
+              ((> (- *oy* .1) *oy-dest*) (setf *oy* (- *oy* .1)))
+              (t (setf *pan-y-p* nil)))
+        (cond ((< (+ *ox* .1) *ox-dest*) (setf *ox* (+ *ox* .1)))
+              ((> (- *ox* .1) *ox-dest*) (setf *ox* (- *ox* .1)))
+              (t (setf *pan-x-p* nil))))
+      ;; Else, navigate according to the player input
+      (progn
+        (cond ((> *py* 0) (setf *oy* (+ *oy* .05)))
+              ((< *py* 0) (setf *oy* (- *oy* .05))))
+        (cond ((> *px* 0) (setf *ox* (- *ox* .05)))
+              ((< *px* 0) (setf *ox* (+ *ox* .05)))))
+      )
   (when (> *ox* 2.2) (change-scene 2))
   (when (< *ox* -1.2) (change-scene 3))
   (when (> *oy* 1.0) (change-scene 0))

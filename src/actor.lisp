@@ -30,7 +30,7 @@
   ((Source-Image
     :accessor Source-Image
     :initarg :source-image
-    :initform "pink-hair.png")
+    :initform "pink-hair-gs.png")
    (Name
     :accessor Name
     :initarg :name
