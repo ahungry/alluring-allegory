@@ -33,24 +33,69 @@
 
 (defparameter *scene-data* (make-hash-table :test #'equal))
 
+(defparameter *scene-data-list* '())
+
 (defun scene-data-populate ()
-  "Fill up the *scene-data* hash table with our various scenes."
-  (setf (gethash "Introduction" *scene-data*)
-        #("Good job!  You made your first choice.  Next up, we will begin our
-story - are you ready for a wonderful adventure?"
-          ("Onward" "Yes") ("Comfort" "No") ("Onward" "Maybe") ("Onward" "So")))
-  (setf (gethash "Comfort" *scene-data*)
-        #("It's ok, don't be afraid.  You can do this game, it isn't too difficult."
-          ("Onward" "Ok....if you say so...")))
-  (setf (gethash "Onward" *scene-data*)
-        #("Now we go on"
-          ("Finish" "Ok")))
-  (setf (gethash "Finish" *scene-data*)
-        #("Fin."
-          ("Postmodem" "Thanks for the great game!")
-          ("Postmodem nou!" "Your game sucked!")))
-  (setf (gethash "Postmodem" *scene-data*)
-        #("Thanks!"))
-  (setf (gethash "Postmodem nou!" *scene-data*)
-        #("No, you suck!"))
-  )
+  "Build a list, then convert to a hash."
+  (setf *scene-data-list* '())
+  (push (make-instance
+         'Scene
+         :title "Introduction"
+         :text "Welcome to the story, we hope you'll enjoy your time with us!
+Are you ready to get going?"
+         :choices (vector
+                   (make-instance 'Choice :text "Yes" :next-scene "Onward")
+                   (make-instance 'Choice :text "No" :next-scene "Comfort")
+                   (make-instance 'Choice :text "Maybe" :next-scene "Onward")
+                   (make-instance 'Choice :text "So" :next-scene "Onward")
+                   )
+         ) *scene-data-list*)
+
+  (push (make-instance
+         'Scene
+         :title "Comfort"
+         :text "It'll be ok, you probably didn't need it anyways."
+         :choices (vector
+                   (make-instance 'Choice :text "Yes" :next-scene "Comfort")
+                   (make-instance 'Choice :text "No" :next-scene "Finish")
+                   )
+         ) *scene-data-list*)
+
+  (push (make-instance
+         'Scene
+         :title "Onward"
+         :text "Here we go, on a magical adventure.  Did you forget anything?"
+         :choices (vector
+                   (make-instance 'Choice :text "Yes" :next-scene "Comfort")
+                   (make-instance 'Choice :text "No" :next-scene "Finish")
+                   )
+         ) *scene-data-list*)
+
+  (push (make-instance
+         'Scene
+         :title "Finish"
+         :text "So, what did you think of the game?"
+         :choices (vector
+                   (make-instance 'Choice :text "It was great!" :next-scene "bye")
+                   (make-instance 'Choice :text "You suck!" :next-scene "nou")
+                   )
+         ) *scene-data-list*)
+
+  (push (make-instance
+         'Scene
+         :title "nou"
+         :text "So mean!"
+         :choices (vector
+                   )
+         ) *scene-data-list*)
+
+  (push (make-instance
+         'Scene
+         :title "bye"
+         :text "Look for new updates soon!"
+         :choices (vector
+                   )
+         ) *scene-data-list*)
+
+  (loop for scene in *scene-data-list*
+     do (setf (gethash (Title scene) *scene-data*) scene)))

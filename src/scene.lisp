@@ -21,8 +21,10 @@
   (:use :cl
         :alluring-allegory.bg-layer
         :alluring-allegory.actor
+        :alluring-allegory.choice
         :glyphs)
-  (:export :Scene))
+  (:export :Scene :Title :Text :Choices :Actors :Background
+           :get-next-scene-id))
 (in-package :alluring-allegory.scene)
 
 ;;; "scene" goes here. Hacks and glory await!
@@ -32,6 +34,10 @@
     :accessor Title
     :initarg :title
     :initform "title")
+   (Text
+    :accessor Text
+    :initarg :text
+    :initform "Your scene description here.")
    (Choices
     :accessor Choices
     :initarg :choices
@@ -44,3 +50,13 @@
     :accessor Background
     :initarg :bg
     :initform (make-instance 'BG-Layer))))
+
+(defgeneric get-next-scene-id (object choice)
+  (:documentation "Blabla"))
+
+(defmethod get-next-scene-id ((current-scene Scene) choice)
+  "Given a scene-id, and a choice, find what scene-id we go to next, as well
+as the plain text description of what we just chose to get there."
+  (if (array-in-bounds-p (Choices current-scene) choice)
+      (let ((next-scene-id (Next-Scene (aref (Choices current-scene) choice))))
+        (values next-scene-id (Choice-Text (aref (Choices current-scene) choice))))))

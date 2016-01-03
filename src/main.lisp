@@ -167,36 +167,23 @@ Please use the arrows to navigate the story.")
 
 (scene-data-populate)
 
-(defun get-next-scene-id (scene-id choice)
-  "Given a scene-id, and a choice, find what scene-id we go to next, as well
-as the plain text description of what we just chose to get there."
-  (let ((current-scene (gethash scene-id *scene-data*)))
-    (if (array-in-bounds-p current-scene (1+ choice))
-        (let ((next-scene-id (car (aref current-scene (1+ choice)))))
-          (values next-scene-id (cadr (aref current-scene (1+ choice))))))))
-
 (defun change-scene (choice &optional scene-override)
   "The chosen scene option."
-  (setf *ox* .6 *oy* -1.5) ;; Reset the text position to the middle of screen
-  (multiple-value-bind (scene-id last-choice-text) (get-next-scene-id *scene* choice)
+  (setf *ox* .5 *oy* -1.5) ;; Reset the text position to the middle of screen
+  (multiple-value-bind (scene-id)
+      (get-next-scene-id (gethash *scene* *scene-data*) choice)
     (when scene-override (setf scene-id scene-override))
     (when (gethash scene-id *scene-data*)
       (setf *scene* scene-id)
       (let ((scene (gethash scene-id *scene-data*)))
-        (setf *story* (format nil "'~a', you say? ~%~%~a"
-                              last-choice-text
-                              (aref scene 0)))
-        ;; (setf *story* (format nil "Scene: ~a~%'~a'~%~a"
-        ;;                       scene-id
-        ;;                       last-choice-text
-        ;;                       (aref scene 0)))
+        (setf *story* (format nil "~a" (Text scene)))
         (say-sdl *story*)
         (loop
-           for choice-slot from 1 to 4
+           for choice-slot from 0 to 3
            do (progn
-                (input-to-texture (1- choice-slot)
-                                  (if (array-in-bounds-p scene choice-slot)
-                                      (cadr (aref scene choice-slot)) ""))))))))
+                (input-to-texture choice-slot
+                                  (if (array-in-bounds-p (Choices scene) choice-slot)
+                                      (Choice-Text (aref (Choices scene) choice-slot)) ""))))))))
 
 (defun draw ()
   "Draw a frame"
@@ -220,7 +207,7 @@ as the plain text description of what we just chose to get there."
   ;; Draw the sprites that are talking
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *player-texture*)
-    (gl:translate (* -1 (/ *ox* 4)) (- (* -1 (/ *oy* 32)) .25) 0)
+    (gl:translate (- (* -1 (/ *ox* 4)) .2) (- (* -1 (/ *oy* 32)) .25) 0)
     (gl:scale .8 1 0)
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the speech bubbles
