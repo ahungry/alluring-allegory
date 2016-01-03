@@ -164,16 +164,19 @@
 
 (defun change-scene (choice &optional scene-override)
   "The chosen scene option."
-  (setf *ox* .3 *oy* -.5) ;; Reset the text position to the middle of screen
+  (setf *ox* .3 *oy* -.7) ;; Reset the text position to the middle of screen
   (multiple-value-bind (scene-id)
       (get-next-scene-id (Current-Scene *story-singleton*) choice)
     (when scene-override (setf scene-id scene-override))
     (when (gethash scene-id (Scene-Data *story-singleton*))
       (Update-Current-Scene *story-singleton* scene-id)
-      (let ((scene (gethash scene-id (Scene-Data *story-singleton*))))
+      (let ((scene (Current-Scene *story-singleton*)))
+        ;; TODO - Add the background change into the Story class
+        (unless (equal *player-texture-source* (Full-Source-Image (aref (Actors scene) 0) *asset-path*))
+          (setf *player-texture-source* (Full-Source-Image (aref (Actors scene) 0) *asset-path*))
+          (setf *player-texture* (load-a-texture *player-texture-source*)))
         ;; TODO - Add the background change into the Story class
         (unless (equal *background-texture-source* (Full-Source-Image (Background scene) *asset-path*))
-          (setf *bg-x-grow* 0)
           (setf *background-texture-source* (Full-Source-Image (Background scene) *asset-path*))
           (setf *background-texture* (load-a-texture *background-texture-source*)))
         (say-sdl (Text scene))
@@ -183,9 +186,6 @@
                 (input-to-texture choice-slot
                                   (if (array-in-bounds-p (Choices scene) choice-slot)
                                       (Text (aref (Choices scene) choice-slot)) ""))))))))
-
-(defparameter *bg-x-grow* 0)
-(defparameter *bg-y-grow* 0)
 
 (defun draw ()
   "Draw a frame"
@@ -204,20 +204,21 @@
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *background-texture*)
     (gl:translate (* -1 (/ *ox* 8)) (* -1 (/ *oy* 64)) 0)
-    (gl:scale (+ 2 (incf *bg-x-grow* .001)) .8 0) ;; Weird perspective shift
+    (gl:scale 1.2 .8 0) ;; Weird perspective shift
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the sprites that are talking
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *player-texture*)
-    (gl:translate (- (* -1 (/ *ox* 4)) .2) (- (* -1 (/ *oy* 32)) .25) 0)
+    (gl:translate (- (* -1 (/ *ox* 4)) .2) (- (* -1 (/ *oy* 32)) .15) 0)
     (gl:scale .8 1 0)
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the speech bubbles
-  (gl:with-pushed-matrix
-    (gl:bind-texture :texture-2d *bubble-texture*)
-    (gl:translate (- *ox* .2) (+ *oy* .3) 0)
-    (gl:scale 1 .3 0)
-    (my-rectangle :texcoords '(0 0 1 1)))
+  (when (Show-Bubble-P (Current-Scene *story-singleton*))
+    (gl:with-pushed-matrix
+      (gl:bind-texture :texture-2d *bubble-texture*)
+      (gl:translate (- *ox* .2) (+ *oy* .3) 0)
+      (gl:scale 1 .3 0)
+      (my-rectangle :texcoords '(0 0 1 1))))
   ;; Draw the story that loops across lines
   (let ((rendered-story-clone (copy-list *rendered-story*)))
     (loop for rendered-story in (nreverse rendered-story-clone)
@@ -233,7 +234,7 @@
               (my-rectangle :texcoords '(0 0 1 1))))))
   (loop for choice from 0 to 3
      do
-       (let* ((choice-position #((.3 .7 0) (.3 -1.1 0) (1.3 -.2 0) (-.45 -.2 0))) ;; n0s1e2w3
+       (let* ((choice-position #((.3 .8 0) (.3 -1.1 0) (1.4 -.2 0) (-.35 -.2 0))) ;; n0s1e2w3
               (choice-rotation (caddr (aref choice-position choice)))
               (choice-x-pos (car (aref choice-position choice)))
               (choice-y-pos (cadr (aref choice-position choice))))
@@ -243,7 +244,7 @@
            (gl:bind-texture :texture-2d (aref *input-words-texture* choice))
            ;;(gl:tex-parameter :texture-2d :texture-min-filter :nearest)
            ;;(gl:tex-parameter :texture-2d :texture-mag-filter :nearest)
-           (gl:scale .5 .25 0)
+           (gl:scale .6 .20 0)
            (my-rectangle :texcoords '(0 0 1 1)))))
   (gl:flush)
   (sdl:update-display))
@@ -257,7 +258,7 @@
   (gl:enable :texture-2d)
   (setf *story-singleton* (make-instance 'Story))
   (scene-data-populate *story-singleton*)
-  (change-scene 0 "Introduction"))
+  (change-scene 0 "Prologue"))
 
 (defparameter *py* 0)
 (defparameter *px* 0)
@@ -278,6 +279,7 @@
           (aref *input-words-time* choice) (get-universal-time))))
 
 (defparameter *player-texture* nil)
+(defparameter *player-texture-source* nil)
 (defparameter *bubble-texture* nil)
 (defparameter *background-texture* nil)
 (defparameter *background-texture-source* nil)

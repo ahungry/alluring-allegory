@@ -65,6 +65,22 @@
 (defmethod Scene-Data-Populate ((story Story))
   "Build a list, then convert to a hash."
   (let ((scene-data-list '()))
+
+    (push (make-instance
+           'Scene
+           :title "Prologue"
+           :text "This is the prologue"
+           :choices (vector
+                     (make-instance 'Choice :text "Ok" :next-scene "Introduction")
+                     (make-instance 'Choice :text "Ok" :next-scene "Introduction")
+                     (make-instance 'Choice :text "Ok" :next-scene "Introduction")
+                     (make-instance 'Choice :text "Ok" :next-scene "Introduction")
+                     )
+           :background (make-instance 'BG-Layer :source-image "dark.png")
+           :actors (vector (make-instance 'Actor :source-image "dark.png"))
+           :show-bubble-p nil
+           ) scene-data-list)
+
     (push (make-instance
            'Scene
            :title "Introduction"

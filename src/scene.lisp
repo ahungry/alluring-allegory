@@ -24,7 +24,7 @@
         :alluring-allegory.actor
         :alluring-allegory.choice
         :glyphs)
-  (:export :Scene :Choices :Actors :Background
+  (:export :Scene :Choices :Actors :Background :Show-Bubble-P
            :get-next-scene-id))
 (in-package :alluring-allegory.scene)
 
@@ -47,6 +47,10 @@
     :accessor Actors
     :initarg :actors
     :initform (vector (make-instance 'Actor)))
+   (Show-Bubble-P
+    :accessor Show-Bubble-P
+    :initarg :show-bubble-p
+    :initform t)
    (Background
     :accessor Background
     :initarg :background

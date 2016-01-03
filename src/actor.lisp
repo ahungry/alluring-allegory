@@ -29,7 +29,7 @@
 (defclass Actor (Base)
   ((Source-Image
     :accessor Source-Image
-    :initarg :si
+    :initarg :source-image
     :initform "pink-hair.png")
    (Name
     :accessor Name
