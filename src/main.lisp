@@ -205,10 +205,10 @@
               (t (setf *pan-x-p* nil))))
       ;; Else, navigate according to the player input
       (progn
-        (cond ((> *py* 0) (setf *oy* (+ *oy* .05)))
-              ((< *py* 0) (setf *oy* (- *oy* .05))))
-        (cond ((> *px* 0) (setf *ox* (- *ox* .05)))
-              ((< *px* 0) (setf *ox* (+ *ox* .05)))))
+        (cond ((> *py* 0) (setf *oy* (+ *oy* .1)))
+              ((< *py* 0) (setf *oy* (- *oy* .1))))
+        (cond ((> *px* 0) (setf *ox* (- *ox* .1)))
+              ((< *px* 0) (setf *ox* (+ *ox* .1)))))
       )
   (when (> *ox* 2.2) (change-scene 2))
   (when (< *ox* -1.2) (change-scene 3))
