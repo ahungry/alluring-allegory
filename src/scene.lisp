@@ -50,7 +50,7 @@
    (Show-Bubble-P
     :accessor Show-Bubble-P
     :initarg :show-bubble-p
-    :initform t)
+    :initform nil)
    (Background
     :accessor Background
     :initarg :background

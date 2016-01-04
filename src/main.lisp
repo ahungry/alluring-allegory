@@ -197,18 +197,18 @@
   (if (or *pan-x-p* *pan-y-p*)
       ;; Auto pan the camera over
       (progn
-        (cond ((< (+ *oy* .1) *oy-dest*) (setf *oy* (+ *oy* .1)))
-              ((> (- *oy* .1) *oy-dest*) (setf *oy* (- *oy* .1)))
+        (cond ((< (+ *oy* .2) *oy-dest*) (setf *oy* (+ *oy* .2)))
+              ((> (- *oy* .2) *oy-dest*) (setf *oy* (- *oy* .2)))
               (t (setf *pan-y-p* nil)))
-        (cond ((< (+ *ox* .1) *ox-dest*) (setf *ox* (+ *ox* .1)))
-              ((> (- *ox* .1) *ox-dest*) (setf *ox* (- *ox* .1)))
+        (cond ((< (+ *ox* .2) *ox-dest*) (setf *ox* (+ *ox* .2)))
+              ((> (- *ox* .2) *ox-dest*) (setf *ox* (- *ox* .2)))
               (t (setf *pan-x-p* nil))))
       ;; Else, navigate according to the player input
       (progn
-        (cond ((> *py* 0) (setf *oy* (+ *oy* .1)))
-              ((< *py* 0) (setf *oy* (- *oy* .1))))
-        (cond ((> *px* 0) (setf *ox* (- *ox* .1)))
-              ((< *px* 0) (setf *ox* (+ *ox* .1)))))
+        (cond ((> *py* 0) (setf *oy* (+ *oy* .2)))
+              ((< *py* 0) (setf *oy* (- *oy* .2))))
+        (cond ((> *px* 0) (setf *ox* (- *ox* .2)))
+              ((< *px* 0) (setf *ox* (+ *ox* .2)))))
       )
   (when (> *ox* 2.2) (change-scene 2))
   (when (< *ox* -1.2) (change-scene 3))

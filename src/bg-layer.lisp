@@ -30,7 +30,7 @@
   ((Source-Image
     :accessor Source-Image
     :initarg :source-image
-    :initform "beach-sketch.png")
+    :initform "dark.png")
    (Scale
     :accessor Scale
     :initarg :Scale
