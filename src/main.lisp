@@ -192,6 +192,11 @@
 (defparameter *pan-x-p* nil)
 (defparameter *pan-y-p* nil)
 
+(defparameter *x-grow* 0)
+(defparameter *y-grow* 0)
+(defparameter *x-grow-inc* .01)
+(defparameter *y-grow-inc* .01)
+
 (defun draw ()
   "Draw a frame"
   (if (or *pan-x-p* *pan-y-p*)
@@ -215,13 +220,24 @@
   (when (> *oy* 1.0) (change-scene 0))
   (when (< *oy* -2.3) (change-scene 1))
   (setf *max-renders* (1+ (abs (round *oy*))))
+
+  (when (> *x-grow* 6) (setf *x-grow-inc* -.01))
+  (when (< *x-grow* 1) (setf *x-grow-inc* .01))
+  (when (> *y-grow* 6) (setf *y-grow-inc* -.01))
+  (when (< *y-grow* 1) (setf *y-grow-inc* .01))
+
   (gl:clear :color-buffer-bit)
   (gl:color 1 1 1)
   ;; Draw the main background
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *background-texture*)
     (gl:translate (* -1 (/ *ox* 8)) (* -1 (/ *oy* 64)) 0)
-    (gl:scale 1.2 .8 0) ;; Weird perspective shift
+    ;;(gl:scale 1.2 .8 0)
+    (gl:scale (+ (incf *x-grow* *x-grow-inc*) 1.2) ;; Mess with perspective of background
+              (+ (incf *y-grow* *y-grow-inc*) .8) 0)
+    (if (Spin (Current-Scene *story-singleton*))
+        (gl:rotate (random 360) 0 0 1)
+        (gl:rotate (* 2 *ox*) 0 0 1))
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the sprites that are talking
   (gl:with-pushed-matrix
@@ -313,9 +329,9 @@
     (sdl-mixer:OPEN-AUDIO)
     (setf cl-opengl-bindings:*gl-get-proc-address* #'sdl-cffi::sdl-gl-get-proc-address)
     (sdl:enable-unicode)
-    (let ((*player-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/sprite/pink-hair-gs.png"))
+    (let ((*player-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/sprite/dark.png"))
           (*bubble-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/bubble.png"))
-          (*background-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/beach-sketch.png"))
+          (*background-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/dark.png"))
           (music (sdl-mixer:load-music (format nil "~a/audio/~a" *asset-path* "bg-theme.mp3"))))
       (init)
       (sdl-mixer:play-music music :loop t)
