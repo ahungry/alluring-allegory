@@ -236,7 +236,7 @@
     (gl:scale (+ (incf *x-grow* *x-grow-inc*) 1.2) ;; Mess with perspective of background
               (+ (incf *y-grow* *y-grow-inc*) .8) 0)
     (if (Spin (Current-Scene *story-singleton*))
-        (gl:rotate (random 360) 0 0 1)
+        (gl:rotate (* *x-grow* *y-grow*) 0 0 1)
         (gl:rotate (* 2 *ox*) 0 0 1))
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the sprites that are talking
