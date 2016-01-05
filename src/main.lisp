@@ -148,7 +148,7 @@
                   (push (sdl-font-to-texture w h (subseq lines tx
                                                          (min (+ tx max-lines-per-texture)
                                                               (length lines)))
-                                             :bpp 32 :color (color :r #xff :g #x00 :b #xaa))
+                                             :bpp 32 :color (color :r #xff :g #x00 :b #x00))
                         *rendered-story*))))))
     (setf *words* words
           *max-renders-last* *max-renders*
@@ -221,9 +221,9 @@
   (when (< *oy* -2.3) (change-scene 1))
   (setf *max-renders* (1+ (abs (round *oy*))))
 
-  (when (> *x-grow* 6) (setf *x-grow-inc* -.01))
+  (when (> *x-grow* 9) (setf *x-grow-inc* -.01))
   (when (< *x-grow* 1) (setf *x-grow-inc* .01))
-  (when (> *y-grow* 6) (setf *y-grow-inc* -.01))
+  (when (> *y-grow* 9) (setf *y-grow-inc* -.01))
   (when (< *y-grow* 1) (setf *y-grow-inc* .01))
 
   (gl:clear :color-buffer-bit)
@@ -242,8 +242,9 @@
   ;; Draw the sprites that are talking
   (gl:with-pushed-matrix
     (gl:bind-texture :texture-2d *player-texture*)
-    (gl:translate (- (* -1 (/ *ox* 4)) .2) (- (* -1 (/ *oy* 32)) .15) 0)
-    (gl:scale .8 1 0)
+    (gl:translate (- (* -1 (/ *ox* 4)) .2)
+                  (- (* -1 (/ *oy* 16)) .15) 0)
+    (gl:scale 1 1 0)
     (my-rectangle :texcoords '(0 0 1 1)))
   ;; Draw the speech bubbles
   (when (Show-Bubble-P (Current-Scene *story-singleton*))
@@ -307,7 +308,7 @@
   (let ((w (/ *resolution-width* 2))
         (h (/ *resolution-height* 4)))
     (setf (aref *input-words-texture* choice)
-          (sdl-font-to-texture w h (list words) :bpp 32 :color (color :r #xff :g #x00 :b #xaa)))
+          (sdl-font-to-texture w h (list words) :bpp 32 :color (color :r #xff :g #x00 :b #x00)))
     (setf (aref *input-words* choice) words
           (aref *input-words-time* choice) (get-universal-time))))
 

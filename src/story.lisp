@@ -14,6 +14,32 @@
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+;; Significant portions of the story are from Project Gutenberg, with
+;; derivative work added as sub-plot
+
+;; Story text licensing information below:
+
+;; The Project Gutenberg EBook of The Great God Pan, by Arthur Machen
+
+;; This eBook is for the use of anyone anywhere at no cost and with
+;; almost no restrictions whatsoever.  You may copy it, give it away or
+;; re-use it under the terms of the Project Gutenberg License included
+;; with this eBook or online at www.gutenberg.net
+
+
+;; Title: The Great God Pan
+
+;; Author: Arthur Machen
+
+;; Posting Date: August 12, 2008 [EBook #389]
+;; Release Date: January, 1996
+;; Last updated: July 3, 2013
+
+;; Language: English
+
+;; Refer to full license in file ./ebooks/the-great-god-pan/pg389.txt
+;; distributed with this package
+
 ;;;; story.lisp
 
 (in-package :cl-user)
@@ -70,10 +96,10 @@
     :title "Prologue"
     :text "Move the text to the edge of the screen to make a selection."
     :choices (vector
-              (make-instance 'Choice :text "The Expiriment" :next-scene "The Expiriment")
-              (make-instance 'Choice :text "The Expiriment" :next-scene "The Expiriment")
-              (make-instance 'Choice :text "The Expiriment" :next-scene "The Expiriment")
-              (make-instance 'Choice :text "The Expiriment" :next-scene "The Expiriment")
+              (make-instance 'Choice :text "" :next-scene "The Experiment")
+              (make-instance 'Choice :text "" :next-scene "The Experiment")
+              (make-instance 'Choice :text "" :next-scene "The Experiment")
+              (make-instance 'Choice :text "The Experiment" :next-scene "The Experiment")
               )
     :background (make-instance 'BG-Layer :source-image "dark.png")
     :actors (vector (make-instance 'Actor :source-image "dark.png"))
@@ -82,7 +108,7 @@
 
    (make-instance
     'Scene
-    :title "The Expiriment"
+    :title "The Experiment"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0001"))
     :text "THE EXPERIMENT"
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
@@ -92,46 +118,169 @@
    (make-instance
     'Scene
     :title "te0001"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0010"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :choices (vector
+              (make-instance 'Choice :text "I was able to make arrangements." :next-scene "te0020")
+              (make-instance 'Choice :text "I cannot spare the time." :next-scene "0010b01")
+              )
     :text "'I am glad you came, very glad indeed.  I was not sure you
 could spare the time.'"
     )
 
    (make-instance
     'Scene
+    :title "0010b01"
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :show-bubble-p t
+    :choices (vector (make-instance 'Choice :text "Fin" :next-scene "0010b01"))
+    :text "I cannot spare the time, as such, I believe our excursion is over.")
+
+   (make-instance
+    'Scene
     :title "te0010"
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :show-bubble-p t
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0020"))
-    :text "'I was able to make arrangements for a few days things are not very
-lively just now.  But have you no misgivings, Raymond?  Is it
-absolutely safe?'"
-    )
+    :text "'I was able to make arrangements for a few days things are
+not very lively just now.  But have you no misgivings, Raymond?  Is it
+absolutely safe?'"  )
 
    (make-instance
     'Scene
     :title "te0020"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0030"))
+    :choices (vector
+              (make-instance 'Choice :text "Head to the valley" :next-scene "te0030")
+              (make-instance 'Choice :text "" :next-scene "te0020")
+              (make-instance 'Choice :text "" :next-scene "te0020")
+              (make-instance 'Choice :text "Head to the woods" :next-scene "0030b01")
+              )
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :spin t
     :text "The two men were slowly pacing the terrace in front of Dr. Raymond's
 house.  The sun still hung above the western mountain-line, but it
 shone with a dull red glow that cast no shadows, and all the air was
 quiet a sweet breath came from the great wood on the hillside above,
-and with it, at intervals, the soft murmuring call of the wild doves.
-Below, in the long lovely valley, the river wound in and out between
-the lonely hills, and, as the sun hovered and vanished into the west, a
-faint mist, pure white, began to rise from the hills.  Dr. Raymond
-turned sharply to his friend."
-    )
+and with it, at intervals, the soft murmuring call of the wild doves.")
+
+    (make-instance
+    'Scene
+    :title "0030b01"
+    :spin t
+    :choices (vector (make-instance 'Choice :text "Onwards" :next-scene "0030b02"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "You begin to head towards the woods.  The doctor follows.")
+
+    (make-instance
+    'Scene
+    :title "0030b02"
+    :spin t
+    :choices (vector
+              (make-instance 'Choice :text "Straight" :next-scene "0030b02straight")
+              (make-instance 'Choice :text "Go Back to the valley" :next-scene "te0030")
+              (make-instance 'Choice :text "Right" :next-scene "0030b02left") ;; TODO: Right path
+              (make-instance 'Choice :text "Left" :next-scene "0030b02left")
+              )
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "As you enter the woods, you can hear the crunch of branches underneath
+your feet.  You look around and notice three different paths you can head down.")
+
+    (make-instance
+    'Scene
+    :title "0030b02left"
+    :spin t
+    :choices (vector
+              (make-instance 'Choice :text "What is it?" :next-scene "0030b02left2")
+              )
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "You turn and proceed down the path.  As you head down the
+path you can hear the quiet hum of the forest.  After walking for a
+bit, Dr.Raymond turns towards you")
+
+    (make-instance
+    'Scene
+    :title "0030b02left2"
+    :show-bubble-p t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :choices (vector
+              (make-instance 'Choice :text "Next" :next-scene "0030b02left3")
+              )
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "I just remembered that I had a few matters to attend to -
+meet me back at the valley when you get a chance.")
+
+    (make-instance
+    'Scene
+    :title "0030b02left3"
+    :spin t
+    :choices (vector
+              (make-instance 'Choice :text "Take it" :next-scene "0030b02left4") ;; TODO: Flag it
+              (make-instance 'Choice :text "Leave it" :next-scene "0030b02left4")
+              )
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "You drudge on through the forest.  The sun continues to go
+down, a cold wind moving in and brushing the leaves around you.  Time
+goes on and you are growing weary.  Just as you're about to turn back,
+you notice a shimmer under some leaves catches your eye.  Upon closer
+examination, it appears to be some type of rock or mineral.")
+
+    (make-instance
+    'Scene
+    :title "0030b02left4"
+    :spin t
+    :choices (vector
+              (make-instance 'Choice :text "Next" :next-scene "te0040")
+              )
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "At this point, it appears there is nothing else to do in the woods.
+You head back towards the valley.  After some time backtracking through the woods,
+you finally reach your destination and resume your earlier conversation with
+the Doctor.")
+
+    (make-instance
+    'Scene
+    :title "0030b02straight"
+    :spin t
+    :choices (vector
+              (make-instance 'Choice :text "What?" :next-scene "0030b02straight2")
+              )
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "You continue to walk forward - as you do, you suddenly feel a sharp
+pain in your back, followed by a rush of warmness that trickles down your spine.
+You gasp for breath, but fail, as you choke on your own blood.")
+
+    (make-instance
+    'Scene
+    :title "0030b02straight2"
+    :spin t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :choices (vector
+              (make-instance 'Choice :text "Fin" :next-scene "0030b02straight2")
+              )
+    :show-bubble-p t
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "Sorry old friend, but I can't have you finding what I have
+out here, to do so would certainly bring about a premature end to my
+research.  Let me know if you see Pan.")
+
+    (make-instance
+    'Scene
+    :title "te0030"
+    :spin t
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0040"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "Below, in the long lovely valley, the river wound in and
+out between the lonely hills, and, as the sun hovered and vanished
+into the west, a faint mist, pure white, began to rise from the hills.
+Dr. Raymond turned sharply to his friend."  )
 
    (make-instance
     'Scene
     :title "te0030"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0040"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Safe?  Of course it is.  In itself the operation is a perfectly simple
 one any surgeon could do it.'"
@@ -140,6 +289,7 @@ one any surgeon could do it.'"
    (make-instance
     'Scene
     :title "te0040"
+    :show-bubble-p t
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0050"))
     :text "'And there is no danger at any other stage?'"
     )
@@ -149,7 +299,7 @@ one any surgeon could do it.'"
     :title "te0050"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0060"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'None absolutely no physical danger whatsoever, I give you my word.
 You are always timid, always, but you know my history.  I have
@@ -161,7 +311,7 @@ devoted myself to transcendental medicine for the last twenty years."
     :title "te0050"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0060"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text
 "I have heard myself called quack and charlatan and impostor, but all the
@@ -173,12 +323,12 @@ do tonight.'"
    (make-instance
     'Scene
     :title "te0060"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0080"))
-    :text "'I should like to believe it is all true.'  You knit your brows, and
-looked doubtfully at Dr. Raymond.  'Are you perfectly sure, Raymond,
-that your theory is not a phantasmagoria--a splendid vision, certainly,
-but a mere vision after all?'"
-    )
+    :show-bubble-p t
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0070"))
+    :text "'I should like to believe it is all true.'  You knit your
+brows, and look doubtfully at Dr. Raymond.  'Are you perfectly sure,
+Raymond, that your theory is not a phantasmagoria--a splendid vision,
+certainly, but a mere vision after all?'"  )
 
    (make-instance
     'Scene
@@ -194,7 +344,7 @@ answered you and faced you, there was a flush on his cheek."
     :title "te0080"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0090"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Look about you.  You see the mountain, and hill following
 after hill, as wave on wave, you see the woods and orchard, the fields
@@ -206,7 +356,7 @@ of ripe corn, and the meadows reaching to the reed-beds by the river."
     :title "te0080"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0090"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text
 "You see me standing here beside you, and hear my voice but I tell you
@@ -221,7 +371,7 @@ eyes."
     :title "te0090"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0095"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text
     "There is a real world, but it is beyond this glamour and this
@@ -234,7 +384,7 @@ all as beyond a veil."
     :title "te0095"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0100"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text
     "I do not know whether any human being has ever lifted that veil
@@ -256,6 +406,7 @@ lifting the veil means.  They called it seeing the god Pan."
    (make-instance
     'Scene
     :title "te0110"
+    :show-bubble-p t
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0120"))
     :text "'It is wonderful indeed,' he said.  'We are standing on the brink of a
 strange world, Raymond, if what you say is true.  I suppose the knife
@@ -267,7 +418,7 @@ is absolutely necessary?'"
     :title "te0120"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0125"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Yes a slight lesion in the grey matter, that is all a trifling
 rearrangement of certain cells, a microscopical alteration that would
@@ -278,7 +429,7 @@ escape the attention of ninety-nine brain specialists out of a hundred.")
     :title "te0125"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0130"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "I don't want to bother you with 'shop,' - I might give you a mass
 of technical detail which would sound very imposing, and would leave
@@ -288,13 +439,23 @@ you as enlightened as you are now."
    (make-instance
     'Scene
     :title "te0130"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0140"))
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0135"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "But I suppose you have read, casually, in out-of-the-way
 corners of your paper, that immense strides have been made recently in
-the physiology of the brain.  I saw a paragraph the other day about
+the physiology of the brain.  ")
+
+   (make-instance
+    'Scene
+    :title "te0135"
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0140"))
+    :show-bubble-p t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text
+    "I saw a paragraph the other day about
 Digby's theory, and Browne Faber's discoveries.  Theories and
 discoveries!  Where they are standing now, I stood fifteen years ago,
 and I need not tell you that I have not been standing still for the
@@ -303,49 +464,85 @@ last fifteen years.  " )
    (make-instance
     'Scene
     :title "te0140"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0150"))
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0145"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "It will be enough if I say that five years ago I made the
 discovery that I alluded to when I said that ten years ago I reached
-the goal.  After years of labour, after years of toiling and groping
+the goal.  ")
+
+ (make-instance
+    'Scene
+    :title "te0145"
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0148"))
+    :show-bubble-p t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text  "After years of labour, after years of toiling and groping
 in the dark, after days and nights of disappointments and sometimes of
-despair, in which I used now and then to tremble and grow cold with
-the thought that perhaps there were others seeking for what I sought,
-at last, after so long, a pang of sudden joy thrilled my soul, and I
-knew the long journey was at an end."  )
+despair, ")
+
+ (make-instance
+    'Scene
+    :title "te0148"
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0150"))
+    :show-bubble-p t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text " in which I used now and then to tremble and grow cold with
+ the thought that perhaps there were others seeking for what I sought,
+ at last, after so long, a pang of sudden joy thrilled my soul, and I
+ knew the long journey was at an end."  )
 
    (make-instance
     'Scene
     :title "te0150"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0160"))
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0155"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text " By what seemed then and still seems a chance, the
 suggestion of a moment's idle thought followed up upon familiar lines
 and paths that I had tracked a hundred times already, the great truth
-burst upon me, and I saw, mapped out in lines of sight, a whole world,
-a sphere unknown continents and islands, and great oceans in which no
-ship has sailed to my belief since a Man first lifted up his eyes and
-beheld the sun, and the stars of heaven, and the quiet earth beneath.
-You will think this all high-flown language, but it is hard to be
-literal.  And yet ")
+burst upon me, and I saw, ")
+
+   (make-instance
+    'Scene
+    :title "te0155"
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0160"))
+    :show-bubble-p t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "mapped out in lines of sight, a whole world, a sphere
+unknown continents and islands, and great oceans in which no ship has
+sailed to my belief since a Man first lifted up his eyes and beheld
+the sun, and the stars of heaven, and the quiet earth beneath.  You
+will think this all high-flown language, but it is hard to be literal.
+And yet ")
 
    (make-instance
     'Scene
     :title "te0160"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0170"))
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0165"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "
 I do not know whether what I am hinting at cannot be set forth
 in plain and lonely terms.  For instance, this world of ours is pretty
 well girded now with the telegraph wires and cables thought, with
 something less than the speed of thought, flashes from sunrise to
-sunset, from north to south, across the floods and the desert places.
+sunset, from north to south, across the floods and the desert places.")
+
+ (make-instance
+    'Scene
+    :title "te0165"
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0170"))
+    :show-bubble-p t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "
 Suppose that an electrician of today were suddenly to perceive that he
 and his friends have merely been playing with pebbles and mistaking
 them for the foundations of the world "
@@ -354,15 +551,24 @@ them for the foundations of the world "
    (make-instance
     'Scene
     :title "te0170"
-    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0180"))
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0175"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "suppose that such a man saw
 uttermost space lie open before the current, and words of men flash
 forth to the sun and beyond the sun into the systems beyond, and the
 voice of articulate-speaking men echo in the waste void that bounds our
-thought.  As analogies go, that is a pretty good analogy of what I have
+thought.  ")
+
+   (make-instance
+    'Scene
+    :title "te0175"
+    :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0180"))
+    :show-bubble-p t
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
+    :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
+    :text "As analogies go, that is a pretty good analogy of what I have
 done- you can understand now a little of what I felt as I stood here
 one evening "
     )
@@ -372,50 +578,43 @@ one evening "
     :title "te0180"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0190"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
-    :text "
-it was a summer evening, and the valley looked much as it
+    :text " it was a summer evening, and the valley looked much as it
 does now- I stood here, and saw before me the unutterable, the
 unthinkable gulf that yawns profound between two worlds, the world of
-matter and the world of spirit- "
-    )
+matter and the world of spirit- " )
 
    (make-instance
     'Scene
     :title "te0190"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0200"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
-    :text "
-I saw the great empty deep stretch dim
-before me, and in that instant a bridge of light leapt from the earth
-to the unknown shore, and the abyss was spanned."
-    )
+    :text " I saw the great empty deep stretch dim before me, and in
+that instant a bridge of light leapt from the earth to the unknown
+shore, and the abyss was spanned."  )
 
    (make-instance
     'Scene
     :title "te0200"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0210"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
-    :text "
-You may look in
-Browne Faber's book, if you like, and you will find that to the present
-day men of science are unable to account for the presence, or to
-specify the functions of a certain group of nerve-cells in the brain.
-That group is, as it were, land to let, a mere waste place for fanciful
-theories.  "
-    )
+    :text " You may look in Browne Faber's book, if you like, and you
+will find that to the present day men of science are unable to account
+for the presence, or to specify the functions of a certain group of
+nerve-cells in the brain.  That group is, as it were, land to let, a
+mere waste place for fanciful theories.  " )
 
    (make-instance
     'Scene
     :title "te0210"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0220"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "
 I am not in the position of Browne Faber and the
@@ -431,7 +630,7 @@ and--we shall be able to finish the sentence later on."
     :title "te0220"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0230"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text " Yes, the knife is necessary- but think what that knife
 will effect.  It will level utterly the solid wall of sense, and
@@ -441,6 +640,7 @@ a spirit-world.  Mary will see the god Pan!'"  )
    (make-instance
     'Scene
     :title "te0230"
+    :show-bubble-p t
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0240"))
     :text "'But you remember what you wrote to me?  I thought it would be
 requisite that she--'"
@@ -452,7 +652,7 @@ requisite that she--'"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0250"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :spin t
-    :text "He whispered the rest into the doctor's ear."
+    :text "You whisper the rest into the doctor's ear."
     )
 
    (make-instance
@@ -460,7 +660,7 @@ requisite that she--'"
     :title "te0250"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0260"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Not at all, not at all.  That is nonsense.  I assure you.  Indeed, it
 is better as it is- I am quite certain of that.'"
@@ -469,6 +669,7 @@ is better as it is- I am quite certain of that.'"
    (make-instance
     'Scene
     :title "te0260"
+    :show-bubble-p t
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0270"))
     :text "'Consider the matter well, Raymond.  It's a great responsibility.
 Something might go wrong- you would be a miserable man for the rest of
@@ -480,7 +681,7 @@ your days.'"
     :title "te0270"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0280"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'No, I think not, even if the worst happened.  As you know, I rescued
 Mary from the gutter, and from almost certain starvation, when she was
@@ -518,7 +719,7 @@ book-case.  Raymond pointed to this."  )
     :title "te0300"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0310"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'You see that parchment Oswald Crollius?  He was one of the first to
 show me the way, though I don't think he ever found it himself.  That
@@ -543,7 +744,7 @@ and raise an eyebrow."  )
     :title "te0320"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0325"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Yes, that is the chair,' said Raymond.  'We may as well place it in
 position.'"
@@ -566,7 +767,7 @@ manipulated the levers."  )
     :title "te0330"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0340"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Now, make yourself quite comfortable.  I have a couple hours'
 work before me- I was obliged to leave certain matters to the last.'"
@@ -626,7 +827,7 @@ the myriad murmur of the summer."
     :title "te0370"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0380"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'I hope the smell doesn't annoy you - there's nothing
 unwholesome about it.  It may make you a bit sleepy, that's all.'"  )
@@ -661,6 +862,7 @@ wood, tracking a little path between the shining undergrowth of
 beech-trees- and the trickle of water dropping from the limestone rock
 sounded as a clear melody in the dream."
     )
+
    (make-instance
     'Scene
     :title "te0400"
@@ -709,7 +911,7 @@ tightly."  )
     :title "te0430"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0440"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'You have been dozing,' he said- 'the journey must have tired you out.
 It is done now.  I am going to fetch Mary- I shall be back in ten
@@ -736,7 +938,7 @@ now over face and neck and arms, but Raymond seemed unmoved."  )
     :title "te0450"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0460"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Mary,' he said, 'the time has come.  You are quite free.  Are you
 willing to trust yourself to me entirely?'"
@@ -757,7 +959,7 @@ willing to trust yourself to me entirely?'"
     :title "te0470"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0480"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Do you hear that?  You are my witness.  Here is the chair,
 Mary.  It is quite easy.  Just sit in it and lean back.  Are you
@@ -809,7 +1011,7 @@ wound he had made."  )
     :title "te0510"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0520"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'She will awake in five minutes.'  Raymond was still perfectly cool.
 'There is nothing more to be done- we can only wait.'"
@@ -866,7 +1068,7 @@ wide-awake, rolling her head from side to side, and grinning vacantly."
     :title "te0560"
     :choices (vector (make-instance 'Choice :text "Next" :next-scene "te0560"))
     :show-bubble-p t
-    :actors (vector (make-instance 'Actor :source-image "pink-hair-gs.png"))
+    :actors (vector (make-instance 'Actor :source-image "doctor.png"))
     :background (make-instance 'BG-Layer :source-image "beach-sketch.png")
     :text "'Yes,' said the doctor, still quite cool, 'it is a great pity- she is a
 hopeless idiot.  However, it could not be helped- and, after all, she
