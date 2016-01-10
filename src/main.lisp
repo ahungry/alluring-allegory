@@ -1,5 +1,5 @@
 ;; Alluring Allegory - A story driven game
-;; Copyright (C) 2015 Matthew Carter
+;; Copyright (C) 2015,2016 Matthew Carter
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU Affero General Public License as published by
@@ -330,10 +330,10 @@
     (sdl-mixer:OPEN-AUDIO)
     (setf cl-opengl-bindings:*gl-get-proc-address* #'sdl-cffi::sdl-gl-get-proc-address)
     (sdl:enable-unicode)
-    (let ((*player-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/sprite/dark.png"))
-          (*bubble-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/bubble.png"))
-          (*background-texture* (load-a-texture "~/src/lisp/alluring-allegory/img/bg/dark.png"))
-          (music (sdl-mixer:load-music (format nil "~a/audio/~a" *asset-path* "bg-theme.mp3"))))
+    (let ((*player-texture* (load-a-texture (format nil "~a/img/sprite/dark.png" *asset-path*)))
+          (*bubble-texture* (load-a-texture (format nil "~a/img/bg/bubble.png" *asset-path*)))
+          (*background-texture* (load-a-texture (format nil "~a/img/bg/dark.png" *asset-path*)))
+          (music (sdl-mixer:load-music (format nil "~a/audio/bg-theme.mp3" *asset-path*))))
       (init)
       (sdl-mixer:play-music music :loop t)
       (sdl:with-events ()
@@ -381,6 +381,16 @@
       (sdl-mixer:close-audio)
       )))
 
+(defun set-paths ()
+  "Make sure we are relative to the asset directory."
+  ;;(print *compile-file-pathname*)
+  ;;(print *load-pathname*)
+  ;;(print *default-pathname-defaults*)
+  (setf *asset-path* (asdf:system-source-directory :alluring-allegory)))
+
 (defun main ()
-  "Main eintry point."
+  "Main entry point."
+  (set-paths)
+  (when (probe-file "settings.lisp")
+    (load "settings.lisp"))
   (opengl-main))
